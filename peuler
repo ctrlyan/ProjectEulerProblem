@@ -1,0 +1,104 @@
+import math
+            #0, 1, 2, 3, 4, 5, 6, 7, 8, 9  
+matchnums = [6, 2, 5, 5, 4, 5, 6, 3, 7, 6]
+#calculates the number of matchsticks needed for the n
+mdigits_cache={}
+def mdigits(n):#{
+  if n in mdigits_cache:
+    return mdigits_cache[n]
+  else:
+    mdigits_cache[n] = sum(matchnums[int(digit)] for digit in str(n))
+    return mdigits_cache[n]
+
+
+#}
+
+#returns the total number of matchsticks for the equation string
+
+def numsticks(m):#{
+    sticks=0
+    for s in m:
+      if s=="+" or s=="*":
+        sticks+=2
+      else:
+        sticks+=mdigits(int(s))
+    return sticks
+#}
+
+#memorization dictionaries
+mx_cache={}
+ml_cache={}
+#used to make sure order of operations are followed
+def mx(n):#{
+  if n in mx_cache:
+    return mx_cache[n]
+
+  if mdigits(n) <= 8:
+    mx_cache[n] = str(n)
+    return mx_cache[n]
+
+  best_eq = str(n)
+  best_sticks = mdigits(n)
+
+  for l in range(2, int(math.sqrt(n)) + 1):
+    if n % l == 0:
+        x = n // l
+        eq = mx(x) + "*" + mx(l)
+        sticks = numsticks(eq)
+        if sticks < best_sticks:
+            best_eq = eq
+            best_sticks = sticks
+  mx_cache[n] = best_eq
+  return best_eq
+#}
+
+#returns the equation that needs the least number of matchsticks
+def ml(n):#{
+    if n in ml_cache:
+      return ml_cache[n]
+
+    if mdigits(n) <= 8:
+      ml_cache[n] = str(n)
+      return ml_cache[n]
+
+    best_eq = str(n)
+    best_sticks = mdigits(n)
+    #addition sequence
+    for l in range(1, int(n/2)+1):
+      x = n - l
+      eq = ml(x) + "+" + ml(l)
+      sticks = numsticks(eq)
+      if sticks < best_sticks:
+          best_eq = eq
+          best_sticks = sticks
+    #multiplication sequence
+    l = int(math.sqrt(n))
+    for l in range(2, int(math.sqrt(n)) + 1):
+      if n % l == 0:
+          x = n // l
+          eq = mx(x) + "*" + mx(l)
+          sticks = numsticks(eq)
+          if sticks < best_sticks:
+              best_eq = eq
+              best_sticks = sticks
+
+    ml_cache[n] = best_eq
+    return best_eq
+#}
+
+#returns the least number of matchsticks needed to represent n
+def M(n): #{
+    p=ml(n)
+    print(p)
+    return numsticks(p)
+#}
+
+def T(N):#{
+  n=1
+  sum = 0
+  for n in range(1, N+1):
+    sum+=M(n)
+  return sum
+#}
+#}
+print(T(100000))  
