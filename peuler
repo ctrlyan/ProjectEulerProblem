@@ -56,14 +56,14 @@ def mx(n):#{
 def ml(n):#{
     if n in ml_cache:
       return ml_cache[n]
-
+      
     if mdigits(n) <= 8:
       ml_cache[n] = str(n)
       return ml_cache[n]
 
     best_eq = str(n)
     best_sticks = mdigits(n)
-    #addition sequence
+  
     for l in range(1, int(n/2)+1):
       x = n - l
       eq = ml(x) + "+" + ml(l)
@@ -71,16 +71,13 @@ def ml(n):#{
       if sticks < best_sticks:
           best_eq = eq
           best_sticks = sticks
-    #multiplication sequence
-    l = int(math.sqrt(n))
-    for l in range(2, int(math.sqrt(n)) + 1):
-      if n % l == 0:
-          x = n // l
-          eq = mx(x) + "*" + mx(l)
-          sticks = numsticks(eq)
-          if sticks < best_sticks:
-              best_eq = eq
-              best_sticks = sticks
+      if n % l == 0 and l<int(math.sqrt(n)+1):
+        x = n // l
+        eq = mx(x) + "*" + mx(l)
+        sticks = numsticks(eq)
+        if sticks < best_sticks:
+            best_eq = eq
+            best_sticks = sticks
 
     ml_cache[n] = best_eq
     return best_eq
@@ -101,4 +98,4 @@ def T(N):#{
   return sum
 #}
 #}
-print(T(100000))  
+print(T(1000000))
